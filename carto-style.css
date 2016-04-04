@@ -1,0 +1,140 @@
+@CHARSET "UTF-8";
+
+body {
+	padding-top: 50px;
+}
+.starter-template {
+	padding: 40px 15px;
+	text-align: center;
+}
+		
+.navbar-default {
+	background-color: #31b391;
+	border-color: #2063b2;
+}
+.navbar-default .navbar-brand {
+	color: #020102;
+}
+.navbar-default .navbar-brand:hover, .navbar-default .navbar-brand:focus {
+	color: #ecdbff;
+}
+.navbar-default .navbar-text {
+	color: #020102;
+}
+.navbar-default .navbar-nav > li > a {
+	color: #020102;
+}
+.navbar-default .navbar-nav > li > a:hover, .navbar-default .navbar-nav > li > a:focus {
+	color: #ecdbff;
+}
+.navbar-default .navbar-nav > .active > a, .navbar-default .navbar-nav > .active > a:hover, .navbar-default .navbar-nav > .active > a:focus {
+	color: #ecdbff;
+	background-color: #2063b2;
+}
+.navbar-default .navbar-nav > .open > a, .navbar-default .navbar-nav > .open > a:hover, .navbar-default .navbar-nav > .open > a:focus {
+	color: #ecdbff;
+	background-color: #2063b2;
+}
+.navbar-default .navbar-toggle {
+	border-color: #2063b2;
+}
+.navbar-default .navbar-toggle:hover, .navbar-default .navbar-toggle:focus {
+	background-color: #2063b2;
+}
+.navbar-default .navbar-toggle .icon-bar {
+	background-color: #020102;
+}
+.navbar-default .navbar-collapse,
+.navbar-default .navbar-form {
+	border-color: #020102;
+}
+.navbar-default .navbar-link {
+	color: #020102;
+}
+.navbar-default .navbar-link:hover {
+	color: #ecdbff;
+}
+
+@media (max-width: 767px) {
+	.navbar-default .navbar-nav .open .dropdown-menu > li > a {
+		color: #020102;
+	}
+	.navbar-default .navbar-nav .open .dropdown-menu > li > a:hover, .navbar-default .navbar-nav .open .dropdown-menu > li > a:focus {
+		color: #ecdbff;
+	}
+	.navbar-default .navbar-nav .open .dropdown-menu > .active > a, .navbar-default .navbar-nav .open .dropdown-menu > .active > a:hover, .navbar-default .navbar-nav .open .dropdown-menu > .active > a:focus {
+		color: #ecdbff;
+		background-color: #2063b2;
+	}
+}
+
+/* Map stuff */
+
+.myMap {
+	height: 500px;
+	border: 1px solid #ccc;
+}
+
+.legend {
+    line-height: 18px;
+    color: #555;
+    background-color: #F2F2F2;
+    border-style: solid;
+    border-color: #919191;
+    border-width: 1px;
+    height:80px;
+    width: 150px;
+}
+.legend i {
+    width: 18px;
+    height: 18px;
+    float: left;
+    margin-right: 8px;
+    opacity: 0.7;
+}
+.legend .circle {
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  margin-top: 0px;
+  background: #ff7800;
+  border-style: solid;
+  border-color:"#000";
+  border-width: 1px;
+  margin-left: 5px;
+}
+
+.time_control {
+	height:210px;
+	position: relative;
+  	left: 3em;
+}
+
+.time_control_container {
+	line-height: 18px;
+    color: #555;
+    background-color: #F2F2F2;
+    border-style: solid;
+    border-color: #919191;
+    border-width: 1px;
+    height:210px;
+    width: 100px;
+}
+
+.text_control {
+	height:120px;
+	width: 200px;
+	position: relative;
+  	left: 1em;
+}
+
+.text_control_container {
+	line-height: 18px;
+    color: #555;
+    background-color: #F2F2F2;
+    border-style: solid;
+    border-color: #919191;
+    border-width: 1px;
+    height:120px;
+    width: 250px;
+}
