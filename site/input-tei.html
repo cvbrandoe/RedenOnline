@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="author" content="Carmen Brando">
+    <meta name="author" content="Francesca Frontini">
+    <meta name="viewport" content="width=device-width">
+    <title>REDEN Online</title>
+    
+    <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+    <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7.2/leaflet.css" />
+    <link rel="stylesheet" href="http://code.jquery.com/ui/1.11.1/themes/smoothness/jquery-ui.css">    
+    <link href="css/style-place.css" rel="stylesheet" type="text/css">    
+  
+  	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+  	<script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+    <script src="http://cdn.leafletjs.com/leaflet-0.7.2/leaflet.js"></script>
+    	
+</head>
+
+<body>
+	<div class="container">
+	<h1>REDEN Online</h1>
+      <p>Web tool for named entity disambiguation and linking to the Linked Data cloud.</p>
+      <br>
+
+      <h4>Distribution</h4>
+      <p>The source code of Reden Online can be found on the following <a href="https://github.com/cvbrandoe/RedenOnline">repository</a>. The standalone version, i.e. REDEN, is also available on this other <a href="https://github.com/cvbrandoe/REDEN">repository</a>, and can be configured for handling further use cases.</p>  
+      <br>
+    
+      <h4>Considerations <button type="button" class="btn btn-default btn-sm" data-toggle="collapse" data-target="#demo">+</button></h4>      
+   	  <div id="demo" class="collapse">
+	  <ul>
+      	<li>REDEN does not perform named-entity recognition (i.e. detection and classification), but links already detected named-entity mentions to Linked Data URIs, therefore the input TEI file must contain already the proper TEI tags for annotating named entities using the <a href="http://www.tei-c.org/release/doc/tei-p5-doc/fr/html/ND.html">TEI-XML standard</a>, for instance, placeName for places and persName for persons</li>
+      	<li>The file needs to be well-formed, REDEN has been tested on TEI files following different schemas, for instance, <a href="http://obvil-dev.paris-sorbonne.fr/developpements/teibook/">Obvil's TEIBook schema</a> and sample TEI file defined according to the aforementioned schema can be found <a href="http://obvil.paris-sorbonne.fr/corpus/critique/renan_nation.xml">here</a></li>
+      	<li>The disambiguation method can decompose the TEI into several portions for the analysis, there are three options, namely, the paragraph, the chapter and the whole text. Further options are possible by modifying the REDEN Online configuration file</li>
+      	<li>By default, author mentions are linked to URIs of the <a href="http://data.bnf.fr">BnF</a> dataset and place mentions are linked to URIs of the <a href="http://fr.dbpedia.org">French DBpedia</a> dataset as these data are already configured in the application. It is possible to configure new Linked Data sets using the standalone version</li>      	
+      </ul>
+   	  </div>
+      
+	  <br>
+         
+      <h4>Let's work now!</h4>
+      <br>
+     
+      <label>1) Provide XML-TEI input file</label>
+      <p>Copy-paste the content of the TEI file in the input area below</p>      
+     
+      <form id='uploadTei' action='process.php' method='post' enctype='multipart/form-data'>
+      	
+      	<div class="form-group">
+	      <textarea id="teitext" name="teitext" class="form-control" rows="15"></textarea>
+		</div>
+      	<div class="form-group">
+    		<label for="exampleInputFile">Or load a TEI file from your computer</label>
+    		<input type="file" name="teifile" id="exampleInputFile">
+		<br>
+		
+		<label for="exampleInputFile">2) Select named-entity type</label>
+    		<select class="form-control" id="entity-type">
+		    <option>Places</option>
+		    <option>Authors</option>
+		</select>
+		<br>
+				
+		<h4>More parameters <button type="button" class="btn btn-default btn-sm" data-toggle="collapse" data-target="#param">+</button></h4>
+		<div id="param" class="collapse">
+		<label for="context">3) Select level of granularity (default is paragraph, i.e. XML tag p)</label>
+    		<select class="form-control" id="context-type">
+		    <option>Paragraph</option>
+		    <option>Chapter</option>
+		    <option>Whole-text</option>
+		</select>
+		<br>
+		
+		<label for="examplexpathexp">4) Enter xpath expression for filtering entities in TEI</label>
+		<p>For instance, persName[not(@type='character')] selects persons which are not fictional characters, default is persName for persons and placeName for places</p>
+		<input name="xpathexp">
+		<br>
+		<br>
+		
+		<label for="propertyTagRef">5) Enter the name of the XML property where the URI will be added for each entity (default is ref_auto)</label>
+		<input name="propertyTagRef">
+		<br>
+		
+		<label for="addScores">6) Add scores to entities as calculated by Reden</label>
+    		<select class="form-control" id="context-type">
+		    <option>Yes</option>
+		    <option>No</option>
+		</select>
+		<br>
+		
+		<label for="centrality">7) Choose centrality measure to be used by Reden</label>
+    		<select class="form-control" id="context-type">
+		    <option>DegreeCentrality</option>
+		    <option>FreemanClosenessCentrality</option>
+		    <option>EigenvectorCentrality</option>
+		</select>
+		<br>
+		
+		<label for="crawlSameAs">8) Specify the base URI of the KB where Reden can find more data using the existing alignments (ex: sameAs), possible values someURL|ALL </label>
+    		<input name="crawlSameAs">
+		<br>
+		<br>
+		</div>		
+			
+  	</div>  		   
+	<button name="submit" type="submit" class="btn btn-default">Submit</button> &nbsp;&nbsp; or &nbsp;&nbsp;
+	<button name="submitOnlyVisu" type="submit" class="btn btn-default">Visualize</button> (after submitting input content or if it has already URI annotations)
+	<img id="loader" src="img/loading.gif" height="100" width="200"/>
+    </form>	
+    
+    <br>
+   	<p id='msg'></p>
+        
+    <br>  
+	<hr>
+      <footer class="footer">
+      <p>
+        Authors: <a href="https://sites.google.com/site/francescafrontini/">Francesca Frontini</a> and <a href="http://obvil.paris-sorbonne.fr/obvil/annuaire/carmen-brando">Carmen Brando</a>.
+      </p>      
+      </footer>
+	</div>
+	
+	<script>
+	
+	$('#loader').hide();
+	
+	//Adding a submit function to the form 
+	$('#uploadTei').submit(function(e){
+		
+		$('#msg').hide();
+		$('#loader').show();
+		//Preventing the default behavior of the form 
+		//Because of this line the form will do nothing i.e will not refresh or redirect the page 
+		e.preventDefault();
+		
+		//Creating an ajax method
+		$.ajax({
+			
+			//Getting the url of the uploadphp from action attr of form 
+			//this means currently selected element which is our form 
+			url: $(this).attr('action'),
+			
+			//For file upload we use post request
+			type: "POST",
+			
+			//Creating data from form 
+			data: new FormData(this),
+			
+			//Setting these to false because we are sending a multipart request
+			contentType: false,
+			cache: false,
+			processData: false,
+			success: function(data){
+				//If the request is successfull we will get the scripts output in data variable 
+				//Showing the result in our html element 
+				$('#msg').show();
+				$('#msg').html(data);
+				$('#loader').hide();
+			},
+			error: function(){}
+		});
+		
+	});
+		
+	</script>
+	
+</body>
+</html>
