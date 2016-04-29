@@ -10,7 +10,7 @@
     <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
     <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7.2/leaflet.css" />
     <link rel="stylesheet" href="http://code.jquery.com/ui/1.11.1/themes/smoothness/jquery-ui.css">    
-    <link href="css/style-place.css" rel="stylesheet" type="text/css">    
+    <link href="css/style.css" rel="stylesheet" type="text/css">    
   
   	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
   	<script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
@@ -21,7 +21,8 @@
 <body>
 	<div class="container">
 	<h1>REDEN Online</h1>
-      <p>Web tool for <b>named entity disambiguation and linking to the Linked Data cloud</b>. Besides, we provide two default types of <b>visualization of TEI content</b> obtained as output from the Web tool, necessary information (e.g. geographic coordinates, pictures) is automatically retrieved from LD sets.</p>
+      <p>Web tool for <b>named entity disambiguation and linking to the Linked Data cloud</b> in input XML-TEI document, it then ouputs an enriched version of the input file.</p>
+      <p>The tool also provides two default types of <b>visualization of ouput TEI content</b>, necessary information for visualization (e.g. geographic coordinates, pictures) is automatically retrieved from LD sets.</p>
       <br>
 
       <h4>Distribution</h4>
@@ -31,7 +32,7 @@
       <h4>Considerations <button type="button" class="btn btn-default btn-sm" data-toggle="collapse" data-target="#demo">+</button></h4>      
    	  <div id="demo" class="collapse">
 	  <ul>
-      	<li>REDEN does not perform named-entity recognition (i.e. detection and classification), but links already detected named-entity mentions to Linked Data URIs, therefore the input TEI file must contain already the proper TEI tags for annotating named entities using the <a href="http://www.tei-c.org/release/doc/tei-p5-doc/fr/html/ND.html">TEI-XML standard</a>, for instance, placeName for places and persName for persons</li>
+      	<li>REDEN does not perform named-entity recognition (i.e. detection and classification), instead links already detected named-entity mentions to Linked Data URIs, therefore the input TEI file must contain already the proper TEI tags for annotating named entities using the <a href="http://www.tei-c.org/release/doc/tei-p5-doc/fr/html/ND.html">TEI-XML standard</a>, for instance, placeName for places and persName for persons</li>
       	<li>The file needs to be well-formed, REDEN has been tested on TEI files following different schemas, for instance, <a href="http://obvil-dev.paris-sorbonne.fr/developpements/teibook/">Obvil's TEIBook schema</a> and sample TEI file defined according to the aforementioned schema can be found <a href="http://obvil.paris-sorbonne.fr/corpus/critique/renan_nation.xml">here</a></li>
       	<li>The disambiguation method can decompose the TEI into several portions for the analysis, there are three options, namely, the paragraph, the chapter and the whole text. Further options are possible by modifying the REDEN Online configuration file</li>
       	<li>By default, author mentions are linked to URIs of the <a href="http://data.bnf.fr">BnF</a> dataset and place mentions are linked to URIs of the <a href="http://fr.dbpedia.org">French DBpedia</a> dataset as these data are already configured in the application. It is possible to configure new Linked Data sets using the standalone version</li>      	
@@ -73,13 +74,13 @@
 		</select>
 		<br>
 		
-		<label for="examplexpathexp">4) Enter xpath expression for filtering entities in TEI</label>
+		<label for="examplexpathexp">4) Apply xpath expression for filtering entities in TEI</label>
 		<p>For instance, persName[not(@type='character')] selects persons which are not fictional characters, default is persName for persons and placeName for places</p>
 		<input name="xpathexp">
 		<br>
 		<br>
 		
-		<label for="propertyTagRef">5) Enter the name of the XML property where the URI will be added for each entity (default is ref_auto)</label>
+		<label for="propertyTagRef">5) Specify the name of the XML property where the URI will be added for each entity (default is ref_auto)</label>
 		<input name="propertyTagRef">
 		<br>
 		
@@ -105,14 +106,31 @@
 		</div>		
 			
   	</div>  		   
-	<button name="submit" type="submit" class="btn btn-default">Submit</button> &nbsp;&nbsp; or &nbsp;&nbsp;
-	<button name="submitOnlyVisu" type="submit" class="btn btn-default">Visualize</button> (after submitting input content or if it has already URI annotations)
+	<button name="process" value="process" type="submit" class="btn btn-default">Submit</button> &nbsp;&nbsp; or &nbsp;&nbsp;
+	<button name="visualize" value="visualize" type="submit" class="btn btn-default">Visualize input TEI</button> (the content should already have URI annotations)
 	<img id="loader" src="img/loading.gif" height="100" width="200"/>
     </form>	
     
     <br>
    	<p id='msg'></p>
-        
+    
+    <div id="visumap">    
+    	<hr>
+    	<h4>Visualization</h4>
+    	<p>The following map shows distribution of places mentioned in the input TEI-XML file, geo-coordinates are obtained via <a href="http://fr.dbpedia.org">French DBpedia</a>.</p>
+    	<div id="map"></div>
+		<br>
+		<div class="info-total"></div>
+		<div class="info-nongeo"></div>
+	</div>
+	
+	<div id="visugallery">
+		<hr>
+		<h4>Visualization</h4>
+    	<p>The following gallery shows the important of authors measured as frequency of mention in the input TEI-XML file, data is obtained from <a href="http://data.bnf.fr">Bibliothèque Nationale de France</a>.</p>    	
+		<div id="gallery" class="galleryC">	
+	</div>
+	
     <br>  
 	<hr>
       <footer class="footer">
@@ -122,15 +140,25 @@
       </footer>
 	</div>
 	
+	</div>
+	<script src="http://cdn.leafletjs.com/leaflet-0.7.2/leaflet.js"></script>
+	<script src="js/jquery.caption.js"></script>
+	<script src="js/mapping.js"></script>
+	<script src="js/gallery.js"></script>
 	<script>
 	
 	$('#loader').hide();
+	$('#visumap').hide();
+	$('#visugallery').hide();
 	
 	//Adding a submit function to the form 
 	$('#uploadTei').submit(function(e){
 		
 		$('#msg').hide();
 		$('#loader').show();
+		$('#visumap').hide();
+		$('#visugallery').hide();
+		
 		//Preventing the default behavior of the form 
 		//Because of this line the form will do nothing i.e will not refresh or redirect the page 
 		e.preventDefault();
@@ -158,13 +186,23 @@
 				$('#msg').show();
 				$('#msg').html(data);
 				$('#loader').hide();
+				
+				//if is map :
+				//generateVisu("json/places-in-tei.json"); //with right name which comes from server
+				//$('#visumap').show();				
+				//if gallery:
+				generateGallery("json/authorInformation.json");	//with right name which comes from server
+				$('#visugallery').show();
 			},
 			error: function(){}
 		});
 		
-	});
-		
+	});			
+
+	
 	</script>
+	<script src="js/jquery.caption.js" type="text/javascript"></script>
+
 	
 </body>
 </html>
