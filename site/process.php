@@ -9,8 +9,9 @@
 		$redenpath = 'D:/EasyPHP-DevServer-14.1VC9/data/localweb/RedenOnline/Reden/';	
 		$serverURL = 'http://localhost/RedenOnline/site/';
 		$path = 'teis/';
+		$pathjson = 'json/';
 		
-		//TODO send something in the answer to indicate whether it is a map (field: place) or other kind of visu (field:person)??
+		$message = "";
 		
 		//Getting TEI content from user
 		if (!empty($_FILES['teifile']['name'])) { //default option when both text and file are provided
@@ -26,25 +27,26 @@
 				move_uploaded_file($tmp_name,$redenWebpath.$path.$date->getTimestamp().$name);
 				$teifilename = $date->getTimestamp().$name;
 				//Displaying success message
-				echo "File upload successfully<br>";
+				$message = $message . "File upload successfully<br>";
 			} else{
 				//If file not selected displaying a message to choose a file
-				echo "Please choose a file<br>";
+				//echo "Please choose a file<br>";
 			}
 		} elseif (!empty($_POST['teitext'])) {
 			//copy content from text area to file in server
 			file_put_contents($path.$date->getTimestamp().".xml", $_POST['teitext']);
 			$teifilename = $date->getTimestamp().".xml";
-			echo "Text upload successfully<br>";
+			$message = $message . "Text upload successfully<br>";
 		} else {
-			//return null;
+			$message = $message . "<b>No file was provided</b><br>";
 		}
 		
 		//The TEI was correctly copied to the server
 		if (isset($teifilename)) {
 			
 			if (isset($_POST['process'])) {
-				//TODO modify config with paramters provided by user
+				
+				//TODO create copy and modify config with paramters provided by user
 					
 				//execute REDEN
 				chdir($redenpath);
@@ -55,7 +57,7 @@
 					
 				// Return will return non-zero upon an error
 				if (!$returnreden) {
-					echo "Finished: OK <br>";
+					$message = $message . "Finished: OK <br>";
 				
 					//create Zip file with results
 					$zipfile = new ZipArchive();
@@ -72,19 +74,51 @@
 					$zipfile->addFile($redenWebpath.$path.str_replace(".xml","-resFinalGraphsV3.txt", $teifilename),
 							str_replace(".xml","-resFinalGraphsV3.txt", $teifilename));
 					$zipfile->close();
-					echo "<b>You can find your results following this <a href='".$serverURL.$path.$teifilename.".zip'>link</a></b><br>";
-				
+					$message = $message . "<b>You can find your results following this <a href='".$serverURL.$path.$teifilename.".zip'>link</a></b><br>";
+					
+					//produce data for visualization purposes
+					//TODO modify config file for visualization, create a copy
+					chdir($redenpath);
+					set_time_limit(0);					
+					if ($_POST['entity-type'] == "Authors") {
+						$jsonfile = $date."localisationInformationv2.json";
+						$propsFile = "config/authors.properties";
+					} else {
+						$jsonfile = $date."places-in-tei.json";
+						$propsFile = "config/latlong.properties";
+					}					
+					exec("java -Dfile.encoding=UTF-8 -jar REDEN.jar config/config-places-enrich.properties ".
+							$redenWebpath.$path.str_replace(".xml","-outV3.xml", $teifilename) .
+							" -produceData4Visu=".$redenWebpath.pathjson.$jsonfile." -propsFile=".$propsFile,
+							$outputreden, $returnreden);
 				} else {
-					echo "Error: ". $returnreden . "<br>";
+					$message = $message . "Error: ". $returnreden . "<br>";
 				}
+				$result = array("message" => $message, "type" => $_POST['entity-type'], "jsonfile" => $pathjson.$jsonfile);
+				
 			} else if (isset($_POST['visualize'])) {
-				//TODO produire JSON file with auxiliar class in REDEN, copy in data folder then and send back the name
-				//TODO send something in the answer to indicate whether it is a map (field: place) or other kind of visu (field:person)
-				echo "VISU";
+				
+				//no need to launch Reden, it is already annotated
+				chdir($redenpath);
+				set_time_limit(0);					
+				if ($_POST['entity-type'] == "Authors") {
+					$jsonfile = $date."localisationInformationv2.json";
+					$propsFile = "config/authors.properties";
+				} else {
+					$jsonfile = $date."places-in-tei.json";
+					$propsFile = "config/latlong.properties";
+				}					
+				exec("java -Dfile.encoding=UTF-8 -jar REDEN.jar config/config-places-enrich.properties ".
+						$redenWebpath.$path.str_replace(".xml","-outV3.xml", $teifilename) .
+						" -produceData4Visu=".$redenWebpath.pathjson.$jsonfile." -propsFile=".$propsFile,
+						$outputreden, $returnreden);				
+				$result = array("message" => $message, "type" => $_POST['entity-type'], "jsonfile" => $pathjson.$jsonfile);
 			} else {				
-				//no button pressed
-			}
-		
-		}		
-			
+				//cancel button pressed
+				$result = array("type" => "Unknown", "message" => $message, "jsonfile" => "");
+			}										
+		} else {
+			$result = array("type" => "Unknown", "message" => $message, "jsonfile" => "");
+		}
+		echo json_encode($result);
 	}

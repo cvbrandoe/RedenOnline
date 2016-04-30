@@ -78,7 +78,7 @@ $(document).ready(function() {
 
 			var props = layer.feature.properties,
 			radius = calcPropRadius(props.occurrences),
-			popupContent = '<b> ' +  '<a href="'+props.dbpediaUri+'">' + props.name +
+			popupContent = '<b> ' +  '<a href="'+props.theuri+'">' + props.name +
 			'</a>: </i>' + props.occurrences + '</i> times';
 			layer.setRadius(radius);
 			layer.bindPopup(popupContent, { offset: new L.Point(0,-radius) }); 
