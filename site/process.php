@@ -136,3 +136,7 @@
 		}
 		echo json_encode($result);
 	}
+	
+	function process_parameters($param) {
+		//TODO		
+	}

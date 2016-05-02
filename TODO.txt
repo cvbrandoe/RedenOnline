@@ -1,2 +1,3 @@
+côté php, code pour créer les copies modifiées des fichiers config pour lancer reden
 check input xml is well-formed
 				
