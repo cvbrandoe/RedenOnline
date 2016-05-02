@@ -51,9 +51,16 @@
 				//execute REDEN
 				chdir($redenpath);
 				set_time_limit(0);
-				exec("java -Dfile.encoding=UTF-8 -jar REDEN.jar config/config-authors.properties ".
+				
+				if ($_POST['entity-type'] == "Authors") {
+					exec("java -Dfile.encoding=UTF-8 -jar REDEN.jar config/config-authors.properties ".
 						$redenWebpath.$path.$teifilename ." -outDir=".$redenWebpath.$path,
 						$outputreden, $returnreden);
+				} else {
+					exec("java -Dfile.encoding=UTF-8 -jar REDEN.jar config/config-places.properties ".
+							$redenWebpath.$path.$teifilename ." -outDir=".$redenWebpath.$path,
+							$outputreden, $returnreden);					
+				}
 					
 				// Return will return non-zero upon an error
 				if (!$returnreden) {
@@ -81,16 +88,21 @@
 					chdir($redenpath);
 					set_time_limit(0);					
 					if ($_POST['entity-type'] == "Authors") {
-						$jsonfile = $date."localisationInformationv2.json";
+						$message = $message . "Processing authors: OK <br>";
+						$jsonfile = $date->getTimestamp()."authorsInformation.json";
 						$propsFile = "config/authors.properties";
+						$configFileE = "config/config-authors-enrich.properties";
 					} else {
-						$jsonfile = $date."places-in-tei.json";
+						$message = $message . "Processing places: OK <br>";
+						$jsonfile = $date->getTimestamp()."places-in-tei.json";
 						$propsFile = "config/latlong.properties";
+						$configFileE = "config/config-places-enrich.properties";
 					}					
-					exec("java -Dfile.encoding=UTF-8 -jar REDEN.jar config/config-places-enrich.properties ".
+					exec("java -Dfile.encoding=UTF-8 -jar REDEN.jar " . $configFileE ." ".
 							$redenWebpath.$path.str_replace(".xml","-outV3.xml", $teifilename) .
-							" -produceData4Visu=".$redenWebpath.pathjson.$jsonfile." -propsFile=".$propsFile,
+							" -produceData4Visu=".$redenWebpath.$pathjson.$jsonfile." -propsFile=".$propsFile,
 							$outputreden, $returnreden);
+					
 				} else {
 					$message = $message . "Error: ". $returnreden . "<br>";
 				}
@@ -102,13 +114,15 @@
 				chdir($redenpath);
 				set_time_limit(0);					
 				if ($_POST['entity-type'] == "Authors") {
-					$jsonfile = $date."localisationInformationv2.json";
+					$jsonfile = $date->getTimestamp()."authorsInformation.json";
 					$propsFile = "config/authors.properties";
+					$configFileE = "config/config-authors-enrich.properties";
 				} else {
-					$jsonfile = $date."places-in-tei.json";
+					$jsonfile = $date->getTimestamp()."places-in-tei.json";
 					$propsFile = "config/latlong.properties";
+					$configFileE = "config/config-places-enrich.properties";
 				}					
-				exec("java -Dfile.encoding=UTF-8 -jar REDEN.jar config/config-places-enrich.properties ".
+				exec("java -Dfile.encoding=UTF-8 -jar REDEN.jar " . $configFileE ." ".
 						$redenWebpath.$path.str_replace(".xml","-outV3.xml", $teifilename) .
 						" -produceData4Visu=".$redenWebpath.pathjson.$jsonfile." -propsFile=".$propsFile,
 						$outputreden, $returnreden);				
