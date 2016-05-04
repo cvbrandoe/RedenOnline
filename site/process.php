@@ -60,7 +60,7 @@
 		//$redenWebpath = 'D:/EasyPHP-DevServer-14.1VC9/data/localweb/RedenOnline/site/';
 		$redenWebpath = '/var/www/media/reden/RedenOnline/site/';
 		//$redenpath = 'D:/EasyPHP-DevServer-14.1VC9/data/localweb/RedenOnline/tool/';
-		$redenpath = '/var/www/media/reden/RedenOnline/tool';		
+		$redenpath = '/var/www/media/reden/RedenOnline/tool/';		
 		//$serverURL = 'http://localhost/RedenOnline/site/';
 		$serverURL = 'http://obvil-dev.paris-sorbonne.fr/reden/RedenOnline/site/';
 		$path = 'teis/';
