@@ -8,13 +8,9 @@
     <title>REDEN Online</title>
     
     <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
-    <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7.2/leaflet.css" />
+    <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.css" />
     <link rel="stylesheet" href="http://code.jquery.com/ui/1.11.1/themes/smoothness/jquery-ui.css">    
     <link href="css/style.css" rel="stylesheet" type="text/css">    
-  
-  	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
-  	<script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
-    <script src="http://cdn.leafletjs.com/leaflet-0.7.2/leaflet.js"></script>
     	
 </head>
 
@@ -55,7 +51,8 @@
 		</div>
       	<div class="form-group">
     		<label for="exampleInputFile">Or load a TEI file from your computer</label>
-    		<input type="file" name="teifile" id="exampleInputFile">
+    		<input type="file" name="teifile" id="exampleInputFile">    		    	
+		</div>
 		<br>
 		
 		<label for="exampleInputFile">2) Select named-entity type</label>
@@ -67,50 +64,48 @@
 				
 		<h4>More parameters <button type="button" class="btn btn-default btn-sm" data-toggle="collapse" data-target="#param">+</button></h4>
 		<div id="param" class="collapse">
-		<label for="context">3) Select level of granularity (default is paragraph, i.e. XML tag p)</label>
-    		<select class="form-control" id="context-type">
-		    <option>Paragraph</option>
-		    <option>Chapter</option>
-		    <option>Whole-text</option>
-		</select>
-		<br>
-		
-		<label for="examplexpathexp">4) Apply xpath expression for filtering entities in TEI</label>
-		<p>For instance, persName[not(@type='character')] selects persons which are not fictional characters, default is persName for persons and placeName for places</p>
-		<input name="xpathexp">
-		<br>
-		<br>
-		
-		<label for="propertyTagRef">5) Specify the name of the XML property where the URI will be added for each entity</label>
-		<p>The default is ref_auto, Reden will assign the URI to a new xml attribute for every annotated entity</p>
-		<input name="propertyTagRef" value="ref_auto">
-		<br>
-		<br>
-		<label for="addScores">6) Add scores to entities as calculated by Reden</label>
-    		<select class="form-control" id="context-type">
-		    <option>Yes</option>
-		    <option>No</option>
-		</select>
-		<br>
-		
-		<label for="centrality">7) Choose centrality measure to be used by Reden</label>
-    		<select class="form-control" id="context-type">
-		    <option>DegreeCentrality</option>
-		    <option>FreemanClosenessCentrality</option>
-		    <option>EigenvectorCentrality</option>
-		</select>
-		<br>
-		
-		<label for="crawlSameAs">8) Specify the base URI of the KB where Reden can find more data using the existing alignments (by default only sameAs predicates), possible values someURL|ALL </label>
-    		<input name="crawlSameAs">
-		<br>
-		<br>
-		</div>		
+			<label for="context">3) Select level of granularity (default is paragraph, i.e. XML tag p)</label>
+	    		<select class="form-control" name="context-type">
+			    <option>Paragraph</option>
+			    <option>Chapter</option>
+			    <option>Whole-text</option>
+			</select>
+			<br>
 			
-  	</div>  		   
+			<label for="examplexpathexp">4) Apply xpath expression for filtering entities in TEI</label>
+			<p>For instance, persName[not(@type='character')] selects persons which are not fictional characters, default is persName for persons and placeName for places</p>
+			<input name="xpathexp" name="xpath-exp">
+			<br>
+			<br>
+			
+			<label for="propertyTagRef">5) Specify the name of the XML property where the URI will be added for each entity</label>
+			<p>The default is ref_auto, Reden will assign the URI to a new xml attribute for every annotated entity</p>
+			<input name="propertyTagRef" value="ref_auto" name="tag-ref">
+			<br>
+			<br>
+			<label for="addScores">6) Add scores to entities as calculated by Reden</label>
+	    		<select class="form-control" name="scores">
+			    <option>Yes</option>
+			    <option>No</option>
+			</select>
+			<br>
+			
+			<label for="centrality">7) Choose centrality measure to be used by Reden</label>
+	    		<select class="form-control" name="centrality">
+			    <option>DegreeCentrality</option>
+			    <option>FreemanClosenessCentrality</option>
+			    <option>EigenvectorCentrality</option>
+			</select>
+			<br>
+			
+			<label for="crawlSameAs">8) Specify the base URI of the KB where Reden can find more data using the existing alignments (by default only sameAs predicates), possible values someURL|ALL </label>
+	    		<input name="crawlSameAs" name="sameAs-prop">
+			<br>			
+  		</div>
+  		<br>  		   
 	<button name="process" value="process" type="submit" class="btn btn-default">Submit</button> &nbsp;&nbsp; or &nbsp;&nbsp;
-	<button name="visualize" value="visualize" type="submit" class="btn btn-default">Visualize input TEI</button> (the content should already have URI annotations) &nbsp;&nbsp;
-	<button name="cancel" value="cancel" type="submit" class="btn btn-default">Cancel</button>
+	<button name="visualize" value="visualize" type="submit" class="btn btn-default">Visualize input TEI</button> (TEI should already have URI annotations) &nbsp;&nbsp;
+	<button name="cancel" value="cancel" type="submit" class="btn btn-default" onclick="reset($('#uploadTei'))">Reset</button>
 	<img id="loader" src="img/loading.gif" height="100" width="200"/>
     </form>	
     
@@ -146,11 +141,18 @@
     </footer>
     
 	</div>
-	<script src="http://cdn.leafletjs.com/leaflet-0.7.2/leaflet.js"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+  	<script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+    <script src="http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.js"></script>
 	<script src="js/jquery.caption.js"></script>
 	<script src="js/mapping.js"></script>
 	<script src="js/gallery.js"></script>
 	<script>
+	
+	window.reset = function (e) {
+		e.wrap('<form>').closest('form').get(0).reset();
+	    e.unwrap();
+	}
 	
 	$('#loader').hide();
 	$('#visumap').hide();
@@ -186,7 +188,9 @@
 			cache: false,
 			processData: false,
 			success: function(data){
-				//Showing the result in our html element 
+				//Showing the result in our html element
+				//$('#msg').show(); debug
+				//$('#msg').html(data); debug
 				var json_obj = $.parseJSON(data)
 				$('#msg').show();
 				$('#msg').html(json_obj.message);

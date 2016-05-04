@@ -1,22 +1,35 @@
 //MAPPING FUNCTIONS
+var map;
 function generateVisu(filenameJson) {
 
-var nonLocalizedPlaces = new Array();
+	var nonLocalizedPlaces = new Array();
+	var cities;	
+	if (typeof map != 'undefined') {
+		map.remove();
+		$( ".info-total" ).empty();
+		$( ".info-nongeo" ).empty();
+	} 
 
-$(document).ready(function() {
-	var cities,	
 	map = L.map('map', { 
 		center: [45.706179, 17.402344], 
 		zoom: 4,	
 		minZoom: 2,
 		maxZoom: 20
 	});
-
+	
+	
+	/*L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
+	    attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://mapbox.com">Mapbox</a>',
+	    maxZoom: 18,
+	    id: 'cvbrandoe.01ea0ce9',
+	    accessToken: 'pk.eyJ1IjoiY3ZicmFuZG9lIiwiYSI6ImNpbnI4dmJiMTAwaDN2eGx5dHFsNDJkdzcifQ.w72rV4vMLOLlgrg4kFNozQ'
+	}).addTo(map);*/
+	
 	L.tileLayer(  
 			'http://{s}.tile.openstreetmap.se/hydda/base/{z}/{x}/{y}.png', {
 				attribution: 'Tiles courtesy of <a href="http://openstreetmap.se/" target="_blank">OpenStreetMap Sweden</a> &mdash; Map data &copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-			}).addTo(map);	
-
+			}).addTo(map);
+	
 	$.getJSON(filenameJson)  	
 	.done(function(data) {
 		var dataInfo = processOccurrences(data);
@@ -44,7 +57,7 @@ $(document).ready(function() {
 				// does not have geometry");
 			}
 		}
-		$( ".info-total" ).append( "<p><mark>"+data.features.length+" places</mark> are displayed on the map.</p>" );
+		$( ".info-total" ).append( "<p><b>Map tiles loading can take a while...</b> </p> <p><mark>"+data.features.length+" places</mark> are displayed on the map.</p>" );
 		$( ".info-nongeo" ).append( "<p><mark>"+nonLocalizedPlaces.length+" places</mark> were not included on the map because geo-coordinates were unavailable, these are: <mark>"+nonLocalizedPlaces.toString().replace(/,/g, ', ')+"</mark></p>" );
 		return {	
 			min : min,
@@ -166,6 +179,4 @@ $(document).ready(function() {
 
 		legend.addTo(map);  
 	} // end createLegend()
-
-});
 }

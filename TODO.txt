@@ -1,3 +1,6 @@
-côté php, code pour créer les copies modifiées des fichiers config pour lancer reden
-check input xml is well-formed
-				
+- côté php, code pour créer les copies modifiées des fichiers config pour lancer reden
+- check input xml is well-formed
+- Pour la visu de la gallerie d'auteurs, il faudrait ne pas tous les afficher d'un coup mais au fur et à mesure que la souris descend la page
+- L'éditeur pretty XML ne marche plus bien quand l'appli devient dynamique, je ne sais pas pourquoi.. c'est donc une simple input area.
+- It does not work on Firefox, only tested on Chrome
+- create own base map style with Mapbox?
