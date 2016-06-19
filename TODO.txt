@@ -1,6 +1,8 @@
-- côté php, code pour créer les copies modifiées des fichiers config pour lancer reden
+- produire un habillage du site en css et inventer un logo pour REDEN et REDEN online
 - check input xml is well-formed
 - Pour la visu de la gallerie d'auteurs, il faudrait ne pas tous les afficher d'un coup mais au fur et à mesure que la souris descend la page
 - L'éditeur pretty XML ne marche plus bien quand l'appli devient dynamique, je ne sais pas pourquoi.. c'est donc une simple input area.
+- faire un video tutoriel: on one peut pas tout expliquer et les gens n'aiment pas les pages avec trop de texte; le video tutorial est très à la page maintenant.
+- faire une page avec une form pour les problèmes et l'help desk, juste une formulaire
 - It does not work on Firefox, only tested on Chrome
-- create own base map style with Mapbox?
+

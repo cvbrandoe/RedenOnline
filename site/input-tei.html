@@ -5,7 +5,7 @@
     <meta name="author" content="Carmen Brando">
     <meta name="author" content="Francesca Frontini">
     <meta name="viewport" content="width=device-width">
-    <title>REDEN Online</title>
+    <title>REDEN Online (beta version)</title>
     
     <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
     <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.css" />
@@ -17,22 +17,26 @@
 <body>
 	<div class="container">
 	<h1>REDEN Online</h1>
-      <p>Web tool for <b>named entity disambiguation and linking to the Linked Data cloud</b> in input XML-TEI document, it then ouputs an enriched version of the input file.</p>
+      <p>This is the BETA version of a Web tool for <b>named entity disambiguation and linking to the Linked Data cloud.</b></p>
+      <p>It takes in input XML-TEI document tagged with named entities, it then ouputs an enriched version of the input file, where these entities are referenced with a link.</p>
       <p>The tool also provides two default types of <b>visualization of ouput TEI content</b> thanks to data such as geographic coordinates or pictures automatically retrieved from LD sets.</p>
+      <p>
+        <b>PLEASE NOTICE that this REDEN ONLINE web interface has only been tested on Google Chrome.</b>
+      </p> 
       <br>
 
       <h4>Distribution</h4>
-      <p>The source code of Reden Online can be found on the following <a href="https://github.com/cvbrandoe/RedenOnline">repository</a>. The standalone version, i.e. REDEN, is also available on this other <a href="https://github.com/cvbrandoe/REDEN">repository</a>, and can be configured for handling further use cases.</p>  
-      <p>If you like to test our tool, please find hereafter two taggued TEI files, <a href="sampletei/apollinaire_heresiarque-et-cie.xml">Guillaume Apollinaire's L’Hérésiarque et Cie</a> (Labex <a href="http://obvil.paris-sorbonne.fr/">OBVIL</a>) and <a href="sampletei/thibaudet_reflexions.xml">Albert Thibaudet's Réflexions sur la littérature</a> (Labex <a href="http://obvil.paris-sorbonne.fr/">OBVIL</a>), the first one can be used to visualize place mentions on a map and the second one to display a gallery of authors' pictures mentioned in the text.</p>
+      <p>The source code of Reden Online can be found on the following <a target="_blank" href="https://github.com/cvbrandoe/RedenOnline">repository</a>. The standalone version, i.e. REDEN, is also available on this other <a target="_blank" href="https://github.com/cvbrandoe/REDEN">repository</a>, and can be configured for handling further use cases.</p>  
+      <p>If you like to test our tool, please find hereafter two taggued TEI files, <a target="_blank" href="sampletei/apollinaire_heresiarque-et-cie.xml">Guillaume Apollinaire's L’Hérésiarque et Cie</a> (Labex <a href="http://obvil.paris-sorbonne.fr/">OBVIL</a>) and <a target="_blank" href="sampletei/thibaudet_reflexions.xml">Albert Thibaudet's Réflexions sur la littérature</a> (Labex <a target="_blank" href="http://obvil.paris-sorbonne.fr/">OBVIL</a>), the first one can be used to visualize place mentions on a map and the second one to display a gallery of authors' pictures mentioned in the text.</p>
       <br>
     
       <h4>Considerations <button type="button" class="btn btn-default btn-sm" data-toggle="collapse" data-target="#demo">+</button></h4>      
    	  <div id="demo" class="collapse">
 	  <ul>
-      	<li>REDEN does not perform named-entity recognition (i.e. detection and classification), instead links already detected named-entity mentions to Linked Data URIs, therefore the input TEI file must contain already the proper TEI tags for annotating named entities using the <a href="http://www.tei-c.org/release/doc/tei-p5-doc/fr/html/ND.html">TEI-XML standard</a>, for instance, placeName for places and persName for persons</li>
-      	<li>The file needs to be well-formed, REDEN has been tested on TEI files following different schemas, for instance, <a href="http://obvil-dev.paris-sorbonne.fr/developpements/teibook/">Obvil's TEIBook schema</a> and sample TEI file defined according to the aforementioned schema can be found <a href="http://obvil.paris-sorbonne.fr/corpus/critique/renan_nation.xml">here</a></li>
+      	<li>REDEN does not perform named-entity recognition (i.e. detection and classification), instead links already detected named-entity mentions to Linked Data URIs, therefore the TEI input file must already contain the proper TEI tags for annotating named entities using the <a href="http://www.tei-c.org/release/doc/tei-p5-doc/fr/html/ND.html">TEI-XML standard</a>, for instance, placeName for places and persName for persons</li>
+      	<li>The file needs to be well-formed; REDEN has been tested on TEI files following different schemas, for instance, <a target="_blank" href="http://obvil-dev.paris-sorbonne.fr/developpements/teibook/">Obvil's TEIBook schema</a>. Sample TEI file defined according to the aforementioned schema can be found <a href="http://obvil.paris-sorbonne.fr/corpus/critique/renan_nation.xml">here</a></li>
       	<li>The disambiguation method can decompose the TEI into several portions for the analysis, there are three options, namely, the paragraph, the chapter and the whole text. Further options are possible by modifying the REDEN Online configuration file</li>
-      	<li>By default, author mentions are linked to URIs of the <a href="http://data.bnf.fr">BnF</a> dataset and place mentions are linked to URIs of the <a href="http://fr.dbpedia.org">French DBpedia</a> dataset as these data are already configured in the application. It is possible to configure new Linked Data sets using the standalone version</li>      	
+      	<li>By default, author mentions are linked to URIs of the <a target="_blank" href="http://data.bnf.fr">BnF</a> dataset and place mentions are linked to URIs of the <a target="_blank" href="http://fr.dbpedia.org">French DBpedia</a> dataset as these data are already configured in the application. It is possible to configure new Linked Data sets using the standalone version</li>      	
       </ul>
    	  </div>
       
@@ -74,13 +78,13 @@
 			
 			<label for="examplexpathexp">4) Apply xpath expression for filtering entities in TEI</label>
 			<p>For instance, persName[not(@type='character')] selects persons which are not fictional characters, default is persName for persons and placeName for places</p>
-			<input name="xpathexp" name="xpath-exp">
+			<input name="xpathexp">
 			<br>
 			<br>
 			
 			<label for="propertyTagRef">5) Specify the name of the XML property where the URI will be added for each entity</label>
 			<p>The default is ref_auto, Reden will assign the URI to a new xml attribute for every annotated entity</p>
-			<input name="propertyTagRef" value="ref_auto" name="tag-ref">
+			<input name="propertyTagRef" value="ref_auto">
 			<br>
 			<br>
 			<label for="addScores">6) Add scores to entities as calculated by Reden</label>
@@ -99,22 +103,22 @@
 			<br>
 			
 			<label for="crawlSameAs">8) Specify the base URI of the KB where Reden can find more data using the existing alignments (by default only sameAs predicates), possible values someURL|ALL </label>
-	    		<input name="crawlSameAs" name="sameAs-prop">
+	    		<input name="crawlSameAs">
 			<br>			
   		</div>
   		<br>  		   
 	<button name="process" value="process" type="submit" class="btn btn-default">Submit</button> &nbsp;&nbsp; or &nbsp;&nbsp;
 	<button name="visualize" value="visualize" type="submit" class="btn btn-default">Visualize input TEI</button> (TEI should already have URI annotations) &nbsp;&nbsp;
 	<button name="cancel" value="cancel" type="submit" class="btn btn-default" onclick="reset($('#uploadTei'))">Reset</button>
-	<img id="loader" src="img/loading.gif" height="100" width="200"/>
+	<div id="loader"><br><br><p><b>It may take some minutes..</b>&nbsp;&nbsp;</p><img src="img/loading.gif" height="100" width="200"/></div>
     </form>	
     
-    <br>
+    <br><br>
    	<p id='msg'></p>
     
     <div id="visumap">    
     	<h4>Visualization</h4>
-    	<p>The following map shows distribution of places mentioned in the input TEI-XML file, geo-coordinates are obtained via <a href="http://fr.dbpedia.org">French DBpedia</a>.</p>
+    	<p>The following map shows distribution of places mentioned in the input TEI-XML file, geo-coordinates are obtained via <a target="_blank" href="http://fr.dbpedia.org">French DBpedia</a>.</p>
     	<div id="map"></div>
 		<br>
 		<div class="info-total"></div>
@@ -123,7 +127,7 @@
 	
 	<div id="visugallery">
 		<h4>Visualization</h4>
-    	<p>The following gallery shows the important of authors measured as frequency of mention in the input TEI-XML file, data is obtained from <a href="http://data.bnf.fr">Bibliothèque Nationale de France</a>.</p>    	
+    	<p>The following gallery shows the important of authors measured as frequency of mention in the input TEI-XML file, data is obtained from <a target="_blank" href="http://data.bnf.fr">Bibliothèque Nationale de France</a>.</p>    	
 		<div id="gallery" class="galleryC">	
 	</div>
 	
@@ -131,13 +135,22 @@
 	<hr>
 	</div>
 	
+	<hr/>
 	<footer class="footer">
+	<p>Please take some minutes to write us a <a href="mailto:carmen.brando@gmail.com?subject=REDENOnline&cc=francesca.frontini@gmail.com">message</a> if you encounter any difficulty using the application or just want to give us feedback.</p>
       <p>
-        Authors: <a href="https://sites.google.com/site/francescafrontini/">Francesca Frontini</a> and <a href="http://obvil.paris-sorbonne.fr/obvil/annuaire/carmen-brando">Carmen Brando</a>.
+        Authors: <a target="_blank" href="https://sites.google.com/site/francescafrontini/">Francesca Frontini</a> and <a target="_blank" href="http://crh.ehess.fr/index.php?5088">Carmen Brando</a>.
       </p>
-      <p>
-        <b>The present tool has only tested on Google Chrome.</b>
-      </p>      
+      <table>
+      	<tr>
+		<td style="border-width:1px; border-color:white;"><p><h4><b> In collaboration with</b>&nbsp;&nbsp;&nbsp;&nbsp;</h4></p></td>		
+		<td style="border-width:1px; border-color:white;"><p><a target="_blank" href="http://obvil.paris-sorbonne.fr"><img src="img/logo-obvil.png" height="60" /></a>&nbsp;&nbsp;</p></td>
+      		<td style="border-width:1px; border-color:white;"><p><a target="_blank" href="http://www.ilc.cnr.it/"><img src="img/ilc_logo.png" height="100" /></a>&nbsp;&nbsp;</p></td>
+      		<td style="border-width:1px; border-color:white;"><p><a target="_blank" href="http://www.clarin-it.it/"><img src="img/CLARIN-IT_Logo_Square.png" height="120" /></a>&nbsp;&nbsp;</p><td>	
+		<td style="border-width:1px; border-color:white;"><p><a target="_blank" href="http://www.ehess.fr/"><img src="img/Ehess_logo.svg.png" height="120" /></a>&nbsp;&nbsp;</p></td>
+      	</tr>      
+      </table>		
+      
     </footer>
     
 	</div>

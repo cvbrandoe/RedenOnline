@@ -3,7 +3,7 @@
 	date_default_timezone_set('Europe/Paris');
 	
 	//creates a copy of the configuration and update it with user input
-	/*function createConfigFile($datestr, $redenpath, $redenWebpath, $path) {
+	function createConfigFile($datestr, $redenpath, $redenWebpath, $path) {
 		
 		//choose base config file
 		if ($_POST['entity-type'] == "Authors") {
@@ -14,27 +14,43 @@
 			$confD = "config/";
 		}
 		
-		//$configBase=fopen($redenpath.$confD.$confF, 'r') or die('Sorry, unable to open config REDEN file ');		
-		
+		$configBase=fopen($redenpath.$confD.$confF, 'r') or die('Sorry, unable to open config REDEN file ');
+
 		//read properties
-		$properties = parse_ini_file($redenpath.$confD.$confF);
-		
+		while (($line = fgets($configBase)) !== false) {
+			if (substr( $line, 0, 1 ) !== "#") {
+				$pieces = explode("=", $line);
+				$properties[rtrim($pieces[0])] = rtrim($pieces[1]);
+				
+			}	
+    		}
+
 		//replace values with user input in array
 		foreach ($properties as $key => $value) {
 			if ($key == 'xpathExpresion' && !empty($_POST['context-type'])) {
-				$value = $_POST['context-type'];
-			} elseif ($key == 'namedEntityTag' && !empty($_POST['xpath-exp'])) {
-				$value = $_POST['xpath-exp'];
-			} elseif ($key == 'propertyTagRef' && !empty($_POST['tag-ref'])) {
-				$value = $_POST['tag-ref'];
+				if ($_POST['context-type'] === 'Paragraph') {				
+					$properties[$key] = "//body//head|//body//item|//body//l|//body//p";
+				} elseif ($_POST['context-type'] === 'Chapter') {				
+					$properties[$key] = "//body/div";
+				}  elseif ($_POST['context-type'] === 'Whole-text') {				
+					$properties[$key] = "//body";
+				}
+
+			} elseif ($key == 'namedEntityTag' && !empty($_POST['xpathexp'])) {
+				$properties[$key] = $_POST['xpathexp'];
+
+			} elseif ($key == 'propertyTagRef' && !empty($_POST['propertyTagRef'])) {
+				$properties[$key] = $_POST['propertyTagRef'];
+
 			} elseif ($key == 'addScores' && !empty($_POST['scores'])) {
-				$value = $_POST['scores'];
-				echo $_POST['scores'];
+				$properties[$key] = $_POST['scores'];
+
 			} elseif ($key == 'centralityMeasure' && !empty($_POST['centrality'])) {
-				$value = $_POST['centrality'];
-			} elseif ($key == 'crawlSameAs' && !empty($_POST['sameAs-prop'])) {
-				$value = $_POST['sameAs-prop'];
-			}
+				$properties[$key] = $_POST['centrality'];
+
+			} elseif ($key == 'crawlSameAs' && !empty($_POST['crawlSameAs'])) {
+				$properties[$key] = $_POST['crawlSameAs'];
+			}				
 		}
 		
 		//rewrite array values in file
@@ -48,23 +64,25 @@
 			}
 			fwrite($configREDENW, $key."=".$value. "\n");
 		}
-		fclose($configREDENW);		
-		return $path.$datestr.$confF;
-	} TODO*/
+		fclose($configREDENW);
+		return $redenWebpath.$path.$datestr.$confF;
+	}
 
 	if($_SERVER['REQUEST_METHOD']=='POST'){
 		
 		$date = new DateTime();		
 		//Path to store files on server
 		define('DS', DIRECTORY_SEPARATOR);		
-		//$redenWebpath = 'D:/EasyPHP-DevServer-14.1VC9/data/localweb/RedenOnline/site/';
+		//$redenWebpath = '/var/www/html/RedenOnline/site/';
 		$redenWebpath = '/var/www/media/reden/RedenOnline/site/';
-		//$redenpath = 'D:/EasyPHP-DevServer-14.1VC9/data/localweb/RedenOnline/tool/';
+		//$redenpath = '/var/www/html/RedenOnline/tool/';
 		$redenpath = '/var/www/media/reden/RedenOnline/tool/';		
 		//$serverURL = 'http://localhost/RedenOnline/site/';
 		$serverURL = 'http://obvil-dev.paris-sorbonne.fr/reden/RedenOnline/site/';
 		$path = 'teis/';
 		$pathjson = 'json/';
+		//$cmdjava = '/usr/java/jdk1.7.0_03/bin/java';
+		$cmdjava = 'java';
 		
 		$message = "";
 		
@@ -100,23 +118,18 @@
 		if (isset($teifilename)) {
 			
 			//create copy and modify config with paramters provided by user
-			//$configredenfile = createConfigFile($date->getTimestamp(), $redenpath, $redenWebpath, $path); TODO		
-			if ($_POST['entity-type'] == "Authors") {
-				$configredenfile = $redenpath."config/config-authors.properties";
-			} else {
-				$configredenfile = $redenpath."config/config-places.properties";
-			}
+			$configredenfile = createConfigFile($date->getTimestamp(), $redenpath, $redenWebpath, $path);
 			if (isset($_POST['process'])) {
 								
 				//execute REDEN
 				chdir($redenpath);
 				set_time_limit(0);				
 				if ($_POST['entity-type'] == "Authors") {
-					exec("java -Dfile.encoding=UTF-8 -jar REDEN.jar " . $configredenfile . " ".
+					exec($cmdjava . " -Dfile.encoding=UTF-8 -jar REDEN.jar " . $configredenfile . " ".
 						$redenWebpath.$path.$teifilename ." -outDir=".$redenWebpath.$path,
 						$outputreden, $returnreden);
 				} else {
-					exec("java -Dfile.encoding=UTF-8 -jar REDEN.jar " . $configredenfile ." ".
+					exec($cmdjava . " -Dfile.encoding=UTF-8 -jar REDEN.jar " . $configredenfile ." ".
 							$redenWebpath.$path.$teifilename ." -outDir=".$redenWebpath.$path,
 							$outputreden, $returnreden);					
 				}
@@ -134,7 +147,7 @@
 						$jsonfile = $date->getTimestamp()."places-in-tei.json";
 						$propsFile = "config/latlong.properties";
 					}
-					exec("java -Dfile.encoding=UTF-8 -jar REDEN.jar " . $configredenfile ." ".
+					exec($cmdjava . " -Dfile.encoding=UTF-8 -jar REDEN.jar " . $configredenfile ." ".
 							$redenWebpath.$path.str_replace(".xml","-outV3.xml", $teifilename) .
 							" -produceData4Visu=".$redenWebpath.$pathjson.$jsonfile." -propsFile=".$propsFile,
 							$outputreden, $returnreden);
@@ -145,6 +158,8 @@
 					if ($zipfile->open($zipfilename, ZipArchive::CREATE) !== TRUE) {
 						exit("Impossible to open file <$zipfilename>\n");
 					}
+					$zipfile->addFile($redenWebpath.$path."README.txt", "README.txt");
+					$zipfile->addFile($configredenfile, "reden.properties");
 					$zipfile->addFile($redenWebpath.$path.str_replace(".xml","-ambigousMentions.txt", $teifilename),
 							str_replace(".xml","-ambigousMentions.txt", $teifilename));
 					$zipfile->addFile($redenWebpath.$path.str_replace(".xml","-outV3.xml", $teifilename),
@@ -155,7 +170,7 @@
 							str_replace(".xml","-resFinalGraphsV3.txt", $teifilename));
 					$zipfile->addFile($redenWebpath.$pathjson.$jsonfile, $jsonfile);
 					$zipfile->close();
-					$message = $message . "<b>You can find the results following this <a href='".$serverURL.$path.$teifilename.".zip'>link</a></b><br>";
+					$message = $message . "<b>You can find the results following this <a target='_blank' href='".$serverURL.$path.$teifilename.".zip'>link</a></b><br>";
 					
 				} else {
 					$message = $message . "Error: ". $returnreden . "<br>";
@@ -174,7 +189,7 @@
 					$jsonfile = $date->getTimestamp()."places-in-tei.json";
 					$propsFile = "config/latlong.properties";
 				}					
-				exec("java -Dfile.encoding=UTF-8 -jar REDEN.jar " . $configredenfile ." ".
+				exec($cmdjava . " -Dfile.encoding=UTF-8 -jar REDEN.jar " . $configredenfile ." ".
 						$redenWebpath.$path.$teifilename .
 						" -produceData4Visu=".$redenWebpath.$pathjson.$jsonfile." -propsFile=".$propsFile,
 						$outputreden, $returnreden);	

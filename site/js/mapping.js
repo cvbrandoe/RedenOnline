@@ -17,24 +17,16 @@ function generateVisu(filenameJson) {
 		maxZoom: 20
 	});
 	
-	
-	/*L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
-	    attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://mapbox.com">Mapbox</a>',
-	    maxZoom: 18,
-	    id: 'cvbrandoe.01ea0ce9',
-	    accessToken: 'pk.eyJ1IjoiY3ZicmFuZG9lIiwiYSI6ImNpbnI4dmJiMTAwaDN2eGx5dHFsNDJkdzcifQ.w72rV4vMLOLlgrg4kFNozQ'
-	}).addTo(map);*/
-	
-	L.tileLayer(  
-			'http://{s}.tile.openstreetmap.se/hydda/base/{z}/{x}/{y}.png', {
-				attribution: 'Tiles courtesy of <a href="http://openstreetmap.se/" target="_blank">OpenStreetMap Sweden</a> &mdash; Map data &copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-			}).addTo(map);
-	
+	L.tileLayer('http://{s}.tile.openstreetmap.se/hydda/base/{z}/{x}/{y}.png', {
+	attribution: 'Tiles courtesy of <a href="http://openstreetmap.se/" target="_blank">OpenStreetMap Sweden</a> &mdash; Map data &copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+	}).addTo(map);
+
 	$.getJSON(filenameJson)  	
 	.done(function(data) {
 		var dataInfo = processOccurrences(data);
 		createPropSymbols(data);  
-		createLegend(dataInfo.min,dataInfo.max);				
+		createLegend(dataInfo.min,dataInfo.max);
+		map.invalidateSize();			
 	}).fail(function() { alert("There has been a problem loading the data.")});
 
 	function processOccurrences(data) {
@@ -57,7 +49,7 @@ function generateVisu(filenameJson) {
 				// does not have geometry");
 			}
 		}
-		$( ".info-total" ).append( "<p><b>Map tiles loading can take a while...</b> </p> <p><mark>"+data.features.length+" places</mark> are displayed on the map.</p>" );
+		$( ".info-total" ).append( "<p><mark>"+data.features.length+" places</mark> are displayed on the map.</p>" );
 		$( ".info-nongeo" ).append( "<p><mark>"+nonLocalizedPlaces.length+" places</mark> were not included on the map because geo-coordinates were unavailable, these are: <mark>"+nonLocalizedPlaces.toString().replace(/,/g, ', ')+"</mark></p>" );
 		return {	
 			min : min,
@@ -91,7 +83,7 @@ function generateVisu(filenameJson) {
 
 			var props = layer.feature.properties,
 			radius = calcPropRadius(props.occurrences),
-			popupContent = '<b> ' +  '<a href="'+props.theuri+'">' + props.name +
+			popupContent = '<b> ' +  '<a target="_blank" href="'+props.theuri+'">' + props.name +
 			'</a>: </i>' + props.occurrences + '</i> times';
 			layer.setRadius(radius);
 			layer.bindPopup(popupContent, { offset: new L.Point(0,-radius) }); 
@@ -177,6 +169,6 @@ function generateVisu(filenameJson) {
 
 		};
 
-		legend.addTo(map);  
+		legend.addTo(map); 
 	} // end createLegend()
 }
