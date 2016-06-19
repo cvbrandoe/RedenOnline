@@ -42,15 +42,16 @@
 			} elseif ($key == 'propertyTagRef' && !empty($_POST['propertyTagRef'])) {
 				$properties[$key] = $_POST['propertyTagRef'];
 
-			} elseif ($key == 'addScores' && !empty($_POST['scores'])) {
+			} /*elseif ($key == 'addScores' && !empty($_POST['scores'])) {
 				$properties[$key] = $_POST['scores'];
 
-			} elseif ($key == 'centralityMeasure' && !empty($_POST['centrality'])) {
+			}*/ elseif ($key == 'centralityMeasure' && !empty($_POST['centrality'])) {
 				$properties[$key] = $_POST['centrality'];
 
 			} elseif ($key == 'crawlSameAs' && !empty($_POST['crawlSameAs'])) {
 				$properties[$key] = $_POST['crawlSameAs'];
-			}				
+			} 
+						
 		}
 		
 		//rewrite array values in file
@@ -82,7 +83,7 @@
 		$path = 'teis/';
 		$pathjson = 'json/';
 		//$cmdjava = '/usr/java/jdk1.7.0_03/bin/java';
-		$cmdjava = 'java';
+		$cmdjava = 'java -Xmx2g';
 		
 		$message = "";
 		
